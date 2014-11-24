@@ -20,7 +20,7 @@ class Appartment < Irr
   field :balkon, type: Boolean
 
 	def parser(html)
-		
+		parse_all(html)
 	end
 	
 end

@@ -48,26 +48,29 @@ class Irr
 
     titles = container.css("li")
     values = titles.css("p")
-    raise
     
-    (0..titles.count).each { |i| pair << [values] }
+    (0..values.count-1).step(2).each { |i| pair << [values[i] && values[i].text, 
 
-    # map = {
-    #   :price => ""
-    #   :text => ""
-    #   :numberOfRooms => ""
-    #   :yearOfBuild => ""
-    #   :secuirity => ""
-    #   :gaz => ""
-    #   :material => ""
-    #   :address => ""
-    #   :contact => ""
-    #   :skype => ""
-    #   :webpage => ""
-    #   :phone => ""
-    #   :photo => ""
+      if values[i+1].text == ""
+        input = values[i+1].css('input[type="checkbox"]').attr('checked').text
+        if input == "checked"
+          true
+        end
 
-    # }
+      else
+       values[i+1] && values[i+1].text 
+      end
+      ]
+    }
+
+    raise
+    map = {
+      :numberOfRooms => "Количество комнат:",
+      :yearOfBuild => "Год постройки/сдачи:",
+      :secuirity => "Охрана:",
+      :gaz => "Газ в доме:",
+      :material => "Материал стен:"
+    }
 
     pair.each do |i|
       title = i.first
@@ -81,6 +84,6 @@ class Irr
     end
 
     self.save!
-    
+    raise    
   end
 end
