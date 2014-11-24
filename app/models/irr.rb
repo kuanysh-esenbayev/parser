@@ -22,11 +22,24 @@ class Irr
     raise 
 	end
 
+
   def parse_phone(html)
     container = html.css(".content_left .form_info")
-    contact = container.css('#allphones').attr('value').text
 
-    var = Base64.decode64(contact).split
+    phone = container.css('#allphones').attr('value').text
+
+    contact = container.css('li')
+    values = contact.css('p')
+
+    pair2 = []
+    (0..values.count-1).step(2).each { |i|
+      if (values[i].text == "Телефон:" || values[i].text == "E-mail:")
+        next
+      end
+      pair2 << [values[i] && values[i].text,values[i+1] && values[i+1].text] }
+
+
+    var = Base64.decode64(phone).split
 
     b = []
     var.each{|s| 
@@ -36,34 +49,16 @@ class Irr
     }
 
     self.phone = b
-    self.save!
+raise
+
+
   end
-  def parse_address(html)
-    
-  end
-  def parse_all(html)
-    pair = []
 
-    container = html.css('div.clear div.additional-features ul.form_info_short')
 
-    titles = container.css("li")
-    values = titles.css("p")
-    
-    (0..values.count-1).step(2).each { |i| pair << [values[i] && values[i].text, 
 
-      if values[i+1].text == ""
-        input = values[i+1].css('input[type="checkbox"]').attr('checked').text
-        if input == "checked"
-          true
-        end
 
-      else
-       values[i+1] && values[i+1].text 
-      end
-      ]
-    }
 
-    raise
+  def parse_all(pair)
     map = {
       :numberOfRooms => "Количество комнат:",
       :yearOfBuild => "Год постройки/сдачи:",
@@ -82,8 +77,5 @@ class Irr
     
       self[res.key(title)] = value
     end
-
-    self.save!
-    raise    
   end
 end

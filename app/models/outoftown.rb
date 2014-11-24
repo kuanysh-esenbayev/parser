@@ -15,16 +15,57 @@ class Outoftown < Irr
   field :typeOfLicence, 	type: String
 
 	def parser(html)
-		parse_all(html)
-		# parse_address(html)
+	    pair = []
 
-	end
-	def parse_all(html)
-		super
+	    container = html.css('div.clear div.additional-features ul.form_info_short')
 
+	    titles = container.css("li")
+	    values = titles.css("p")
+	    
+	    (0..values.count-1).step(2).each { |i| pair << [values[i] && values[i].text, 
+
+	      if values[i+1].text == ""
+	        input = values[i+1].css('input[type="checkbox"]').attr('checked').text
+	        if input == "checked"
+	          true
+	        end
+	      else
+	       values[i+1] && values[i+1].text 
+	      end
+	      ]
+	    }
+	    parse_phone(html)
+	    parse_all(pair)
+	    parse_other(pair)
 	end
-	# def parse_address(html)
-	# 	super
-	# end
+	def parse_other(pair)		
+	    map = {
+	      :repair => "Ремонт:",
+		  :heating => "Отапливаемый:",			
+		  :water => "Водопровод:", 			
+		  :electricity => "Электричество (подведено):", 		
+		  :canalization => "Канализация:",	
+		  :garazh => "Гараж:", 			
+		  :areaLand => "Площадь участка:", 			
+		  :areaBuilding => "Площадь строения:", 		
+		  :category => "Категория земли:", 			
+		  :typeOfBuilding => "Строение:",	
+		  :typeOfLicence => "Вид разрешенного использования:"
+	    }
+
+	    pair.each do |i|
+	      title = i.first
+	      value = i.last
+
+	      res = map.select do |k, v|
+	       v == title
+	      end
+	    
+	      self[res.key(title)] = value
+	    end
+
+	    self.save!
+	    raise
+	end
 
 end
