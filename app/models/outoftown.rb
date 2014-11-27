@@ -13,11 +13,17 @@ class Outoftown < Irr
   field :category, 			type: String
   field :typeOfBuilding,	type: String
   field :typeOfLicence, 	type: String
+  field :numberOfRooms, type: Integer
+  field :yearOfBuild,   type: Integer
+  field :secuirity,     type: Boolean
+
+
+
 
 	def parser(html)
 	    pair = []
 
-	    container = html.css('div.clear div.additional-features ul.form_info_short')
+	    container = html.css('div.clear div.additional-features ul.form_info')
 
 	    titles = container.css("li")
 	    values = titles.css("p")
@@ -34,13 +40,19 @@ class Outoftown < Irr
 	      end
 	      ]
 	    }
+	    
 	    parse_phone(html)
+	    # parse_contact(html)
+	    parse_photo(html)
+
+	    # parse_text(html)
 	    parse_all(pair)
 	    parse_other(pair)
+	    raise
 	end
 	def parse_other(pair)		
 	    map = {
-	      :repair => "Ремонт:",
+	      :numberOfRooms => "Количество комнат:",
 		  :heating => "Отапливаемый:",			
 		  :water => "Водопровод:", 			
 		  :electricity => "Электричество (подведено):", 		
@@ -50,7 +62,10 @@ class Outoftown < Irr
 		  :areaBuilding => "Площадь строения:", 		
 		  :category => "Категория земли:", 			
 		  :typeOfBuilding => "Строение:",	
-		  :typeOfLicence => "Вид разрешенного использования:"
+		  :typeOfLicence => "Вид разрешенного использования:",
+	      :yearOfBuild => "Год постройки/сдачи:",
+	      :secuirity => "Охрана:",
+
 	    }
 
 	    pair.each do |i|
